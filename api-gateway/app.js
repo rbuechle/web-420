@@ -1,13 +1,27 @@
+/*============================================
+; Title: Assignment 1.4
+; Author: Peter Itskovich
+; Date: 8 July 2020
+; Modified By: Rebecca Buechle
+; Description: API Setup
+===========================================
+*/
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var indexRouter = require('./routes/index');
 
-
 var app = express();
+
+//database connection
+mongoose.connect('mongodb+srv://admin:admin@cluster0.spcen.mongodb.net/api-gateway?retryWrites=true&w=majority', {
+  promiseLibrary: require('bluebird')
+  }).then(()=>console.log('connection successful'))
+  .catch((err)=>console.error(err));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,7 +34,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
