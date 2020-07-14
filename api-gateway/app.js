@@ -6,16 +6,19 @@
 ; Description: API Setup
 ===========================================
 */
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
 var indexRouter = require('./routes/index');
+var apiCatalog = require('./routes/api-catalog');
+mongoose.Promise = require('bluebird');
 
 var app = express();
+
 
 //database connection
 mongoose.connect('mongodb+srv://admin:admin@cluster0.spcen.mongodb.net/api-gateway?retryWrites=true&w=majority', {
@@ -31,8 +34,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/api', apiCatalog); 
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
