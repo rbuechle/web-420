@@ -17,23 +17,23 @@ var config = require('../config')
 exports.user_register = function(req, res) {
     var hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
-    var newUser = new user({
+    var newUser = new User({
       username: req.body.username,
       password: hashedPassword,
       email: req.body.email
   });
   
   User.add(newUser, (err, user) => {
-    if (err)
-      return res.status(500).send('There was a problem registering the user.');
-    var token = jwt.sign({ id: user._id}, config.web.secret, {
-        expiresIn: 86400 //24hrs
+  if (err)
+    return res.status(500).send('There was a problem registering the user.');
+  var token = jwt.sign({ id: user._id}, config.web.secret, {
+      expiresIn: 86400 //24hrs
+  });
+  res.status(200).send({ auth: true, token: token });
+
     });
-    res.status(200).send({ auth: true, token: token });
-  
-    });
-  
-};
+
+  };
 
 //verifies token on GET
 exports.user_token = function(req, res) {
@@ -41,7 +41,7 @@ exports.user_token = function(req, res) {
   
     if (!token) return res.status(401).send({ auth: false, message: 'No token provided'});
   
-    jwt.verify(token, config.web.secret, function(err,decoded) {
+    jwt.verify(token, config.web.secret, function(err, decoded) {
       if (err) return res.status(500).send({auth: false, message:'Failed to authenticate token'});
   
       User.getById(decoded.id, function(err, user) {
