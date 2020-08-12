@@ -28,3 +28,9 @@ module.exports.getById = (id, callback) => {
     var query = {_id: id};
     User.findById(query, callback);
 };
+
+//new query for finding individual users by email
+module.exports.getOne = (e, callback) => {
+    var query = {email: e};
+    User.findOne(query, callback);
+};
